@@ -8,15 +8,12 @@
 import SwiftUI
 
 struct ContentView: View {
-    @Binding var document: Remote_TextDocument
+  
+  @ObservedObject var model: FileModel
+  @State private var data = ""
+  
 
-    var body: some View {
-        TextEditor(text: $document.text)
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView(document: .constant(Remote_TextDocument()))
-    }
+  var body: some View {
+    Text("lol")
+  }
 }

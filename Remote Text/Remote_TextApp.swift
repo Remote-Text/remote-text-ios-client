@@ -9,9 +9,19 @@ import SwiftUI
 
 @main
 struct Remote_TextApp: App {
-    var body: some Scene {
-        DocumentGroup(newDocument: Remote_TextDocument()) { file in
-            ContentView(document: file.$document)
+  
+  @ObservedObject var model: FileModel
+  
+  init() {
+    self.model = FileModel()
+  }
+  
+  var body: some Scene {
+    WindowGroup {
+      ContentView(model: model)
+        .task {
+          await model.fetchDocuments()
         }
     }
+  }
 }
