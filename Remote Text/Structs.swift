@@ -58,7 +58,7 @@ enum PreviewDetailType {
 }
 
 // MARK: - Needed for inputs to fetch requests
-struct NameAndOptionalContent {
+struct FileNameAndOptionalContent: Codable {
   let name: String
   let content: String?
 }

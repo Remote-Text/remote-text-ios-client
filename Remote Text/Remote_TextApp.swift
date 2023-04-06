@@ -20,7 +20,7 @@ struct Remote_TextApp: App {
     WindowGroup {
       ContentView(model: model)
         .task {
-          await model.fetchDocuments()
+          await model.createFile()
         }
     }
   }
