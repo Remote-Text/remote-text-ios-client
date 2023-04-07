@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct File: Identifiable {
+struct File: Identifiable, Codable {
   let name: String
   let id: UUID
   let content: String
@@ -20,39 +20,39 @@ struct FileSummary: Identifiable, Codable {
   let createdTime: String
 }
 
-struct GitCommit {
+struct GitCommit: Codable {
   let hash: String
   let parent: String?
 }
 
-struct CompilationOutput {
+struct CompilationOutput: Codable {
   let log: String
   let state: CompilationState
 }
 
-struct PreviewDetail {
+struct PreviewDetail: Codable {
   let id: UUID
   let name: String
   let data: String
   let type: PreviewDetailType
 }
 
-struct GitRef {
+struct GitRef: Codable {
   let name: String
   let hash: String
 }
 
-struct GitHistory {
+struct GitHistory: Codable {
   let commits: [GitCommit]
   let refs: [GitRef]
 }
 
-enum CompilationState {
+enum CompilationState: Codable {
   case SUCCESS
   case FAILURE
 }
 
-enum PreviewDetailType {
+enum PreviewDetailType: Codable {
   case PDF
   case HTML
 }
@@ -63,12 +63,12 @@ struct FileNameAndOptionalContent: Codable {
   let content: String?
 }
 
-struct FileIDAndGitHash {
+struct FileIDAndGitHash: Codable {
   let id: UUID
   let hash: String
 }
 
-struct FileAndHashAndBranchName {
+struct FileAndHashAndBranchName: Codable {
   let name: String
   let id: UUID
   let content: String
@@ -76,6 +76,6 @@ struct FileAndHashAndBranchName {
   let branch: String
 }
 
-struct IdOnly {
+struct IdOnly: Codable {
   let id: UUID
 }
