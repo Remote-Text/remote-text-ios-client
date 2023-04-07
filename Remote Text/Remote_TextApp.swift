@@ -19,9 +19,6 @@ struct Remote_TextApp: App {
   var body: some Scene {
     WindowGroup {
       ContentView(model: model)
-        .task {
-          await model.createFile(named: "sam.md", withContent: "Hello, world!")
-        }
     }
   }
 }

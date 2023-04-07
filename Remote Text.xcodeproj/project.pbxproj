@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22A1A13D29E0D3DA00D26FCC /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 22A1A13C29E0D3DA00D26FCC /* SFSafeSymbols */; };
+		22A1A13F29E0D71000D26FCC /* CreateFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A1A13E29E0D71000D26FCC /* CreateFileView.swift */; };
+		22A1A14129E0D72200D26FCC /* FileDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A1A14029E0D72200D26FCC /* FileDetailView.swift */; };
 		231BDB2B29DF6C980024D52C /* Remote_TextApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231BDB2A29DF6C980024D52C /* Remote_TextApp.swift */; };
 		231BDB2F29DF6C980024D52C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231BDB2E29DF6C980024D52C /* ContentView.swift */; };
 		231BDB3129DF6C990024D52C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 231BDB3029DF6C990024D52C /* Assets.xcassets */; };
@@ -16,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		22A1A13E29E0D71000D26FCC /* CreateFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateFileView.swift; sourceTree = "<group>"; };
+		22A1A14029E0D72200D26FCC /* FileDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDetailView.swift; sourceTree = "<group>"; };
 		231BDB2729DF6C980024D52C /* Remote Text.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Remote Text.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		231BDB2A29DF6C980024D52C /* Remote_TextApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Remote_TextApp.swift; sourceTree = "<group>"; };
 		231BDB2E29DF6C980024D52C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -31,6 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22A1A13D29E0D3DA00D26FCC /* SFSafeSymbols in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,6 +69,8 @@
 				231BDB3029DF6C990024D52C /* Assets.xcassets */,
 				231BDB3529DF6C990024D52C /* Info.plist */,
 				231BDB3229DF6C990024D52C /* Preview Content */,
+				22A1A13E29E0D71000D26FCC /* CreateFileView.swift */,
+				22A1A14029E0D72200D26FCC /* FileDetailView.swift */,
 			);
 			path = "Remote Text";
 			sourceTree = "<group>";
@@ -91,6 +99,9 @@
 			dependencies = (
 			);
 			name = "Remote Text";
+			packageProductDependencies = (
+				22A1A13C29E0D3DA00D26FCC /* SFSafeSymbols */,
+			);
 			productName = "Remote Text";
 			productReference = 231BDB2729DF6C980024D52C /* Remote Text.app */;
 			productType = "com.apple.product-type.application";
@@ -119,6 +130,9 @@
 				Base,
 			);
 			mainGroup = 231BDB1E29DF6C980024D52C;
+			packageReferences = (
+				22A1A13B29E0D3DA00D26FCC /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
+			);
 			productRefGroup = 231BDB2829DF6C980024D52C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -145,6 +159,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22A1A13F29E0D71000D26FCC /* CreateFileView.swift in Sources */,
+				22A1A14129E0D72200D26FCC /* FileDetailView.swift in Sources */,
 				231BDB2B29DF6C980024D52C /* Remote_TextApp.swift in Sources */,
 				231BDB3E29DF6EAB0024D52C /* Structs.swift in Sources */,
 				231BDB3C29DF6E810024D52C /* FileModel.swift in Sources */,
@@ -353,6 +369,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		22A1A13B29E0D3DA00D26FCC /* XCRemoteSwiftPackageReference "SFSafeSymbols" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SFSafeSymbols/SFSafeSymbols";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		22A1A13C29E0D3DA00D26FCC /* SFSafeSymbols */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22A1A13B29E0D3DA00D26FCC /* XCRemoteSwiftPackageReference "SFSafeSymbols" */;
+			productName = SFSafeSymbols;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 231BDB1F29DF6C980024D52C /* Project object */;
 }

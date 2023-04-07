@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SFSafeSymbols
 
 struct ContentView: View {
     
@@ -20,90 +21,46 @@ struct ContentView: View {
     @State private var name: String = ""
     @State private var content: String = ""
     
+    @State var files: [FileSummary] = []
+    
     
     var body: some View {
-        HStack {
+        NavigationStack {
             VStack {
-                TextField("ID", text: $_id)
-                TextField("Hash", text: $hash)
-                TextField("Name", text: $name)
-                TextField("Content", text: $content)
-            }
-            VStack {
-                Button {
-                    Task {
-                        print(await model.listFiles())
-                    }
-                } label: {
-                    Text("List Files")
-                }
-                Button {
-                    Task {
-                        let file = await model.createFile(named: name, withContent: content)
-                        _id = file.id.uuidString
-                        print(file)
-                    }
-                } label: {
-                    Text("Create File")
-                }
-                Button {
-                    Task {
-                        guard let id = id else {
-                            return
+                HStack {
+                    Button {
+                        Task {
+                            print("in task")
+                            self.files = await model.listFiles()
                         }
-                        let file = await model.getFile(id: id, atVersion: hash)
-                        name = file.name
-                        print(file)
-                    }
-                } label: {
-                    Text("Get File")
+                    } label: {
+                        Image(systemSymbol: .arrowClockwise)
+                    }.padding(.all)
+                    Spacer()
+                    NavigationLink {
+                        CreateFileView(model: model)
+                    } label: {
+                        Image(systemSymbol: .plus)
+                    }.padding(.all)
                 }
-                Button {
-                    Task {
-                        guard let id = id else { return }
-                        let res = await model.saveFile(id: id, name: name, content: content, parentCommit: hash, branch: "main")
-                        hash = res.hash
-                        print(res)
+                Spacer()
+                ScrollView(.vertical) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))]) {
+                        ForEach(files) { file in
+                            NavigationLink {
+                                FileDetailView(file, model)
+                            } label: {
+                                VStack {
+                                    Image(systemSymbol: .docText)
+                                        .font(.largeTitle)
+                                        .imageScale(.large)
+                                    Text(file.name)
+                                }
+                            }.padding(.all)
+                        }
                     }
-                } label: {
-                    Text("Save File")
                 }
-                Button {
-                    Task {
-                        guard let id = id else { return }
-                        let res = await model.previewFile(id: id, atVersion: hash)
-                        print(res)
-                    }
-                } label: {
-                    Text("Preview File")
-                }
-                Button {
-                    Task {
-                        guard let id = id else { return }
-                        let res = await model.getPreview(id: id, atVersion: hash)
-                        print(res)
-                    }
-                } label: {
-                    Text("Get Preview")
-                }
-                Button {
-                    Task {
-                        guard let id = id else { return }
-                        let res = await model.getHistory(id: id)
-                        print(res)
-                    }
-                } label: {
-                    Text("Get History")
-                }
-                Button {
-                    Task {
-                        guard let id = id else { return }
-                        let res = await model.deleteFile(id: id)
-                        print("ok")
-                    }
-                } label: {
-                    Text("Delete File")
-                }
+                Spacer()
             }
         }
     }
