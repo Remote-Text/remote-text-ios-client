@@ -8,22 +8,22 @@
 import SwiftUI
 
 struct FileDetailView: View {
-    private let id: UUID
-    var model: FileModel
+    
+    @Environment(\.dismiss) var dismiss
+    @ObservedObject var model: FileModel
+  
     @State var hash: String = ""
-    
+    @State var fileName = ""
+    @State var content = ""
     @State private var loading = true
-    
+  
+    private let id: UUID
+
     init(_ file: FileSummary, _ model: FileModel) {
         self.id = file.id
         self._fileName = State(wrappedValue: file.name)
         self.model = model
     }
-    
-    @State var fileName = ""
-    @State var content = ""
-    
-    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         if loading {

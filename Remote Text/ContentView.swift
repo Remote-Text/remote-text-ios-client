@@ -11,31 +11,38 @@ import SFSafeSymbols
 struct ContentView: View {
     
     @ObservedObject var model: FileModel
-    @State private var data = ""
     
     @State private var _id: String = ""
     private var id: UUID? {
         UUID(uuidString: _id)
     }
+  
+    @State private var data = ""
     @State private var hash: String = ""
     @State private var name: String = ""
     @State private var content: String = ""
-    
     @State var files: [FileSummary] = []
-    
+  
+    @State private var isLoading = false
     
     var body: some View {
         NavigationStack {
             VStack {
                 HStack {
-                    Button {
-                        Task {
-                            print("in task")
-                            self.files = await model.listFiles()
-                        }
-                    } label: {
-                        Image(systemSymbol: .arrowClockwise)
-                    }.padding(.all)
+                  if isLoading {
+                        ProgressView()
+                      } else {
+                        Button {
+                            Task {
+                                print("in task")
+                                isLoading = true
+                                self.files = await model.listFiles()
+                                isLoading = false
+                            }
+                        } label: {
+                            Image(systemSymbol: .arrowClockwise)
+                        }.padding(.all)
+                      }
                     Spacer()
                     NavigationLink {
                         CreateFileView(model: model)

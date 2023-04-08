@@ -8,6 +8,8 @@
 import Foundation
 
 class FileModel: ObservableObject {
+  
+    static let shared = FileModel()
     
     private func request(to endpoint: String, with data: Codable?) throws -> URLRequest {
         let BASE_URL = "http://localhost:3030/api"
@@ -50,6 +52,7 @@ class FileModel: ObservableObject {
         return files
     }
     
+    @discardableResult
     func createFile(named name: String, withContent content: String) async -> FileSummary {
         let dataToEncode = FileNameAndOptionalContent(name: name, content: content)
         let urlRequest = try! request(to: "createFile", with: dataToEncode)
@@ -106,6 +109,7 @@ class FileModel: ObservableObject {
         return file
     }
     
+    @discardableResult
     func saveFile(id: UUID, name: String, content: String, parentCommit parent: String, branch: String) async -> GitCommit {
         let dataToEncode = FileAndHashAndBranchName(name: name, id: id, content: content, parent: parent, branch: branch)
         let urlRequest = try! request(to: "saveFile", with: dataToEncode)
@@ -227,7 +231,7 @@ class FileModel: ObservableObject {
     func deleteFile(id: UUID) async {
         let dataToEncode = IdOnly(id: id)
         let urlRequest = try! request(to: "deleteFile", with: dataToEncode)
-        let (data, response) = try! await URLSession.shared.data(for: urlRequest)
+        let (_, response) = try! await URLSession.shared.data(for: urlRequest)
         
         guard let response = response as? HTTPURLResponse else {
             fatalError("Response is not HTTPResponse")

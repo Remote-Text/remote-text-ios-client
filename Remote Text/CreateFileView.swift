@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct CreateFileView: View {
+  
+    @Environment(\.dismiss) var dismiss
+  
+    @ObservedObject var model: FileModel
+  
     @State var fileName = ""
     @State var content = ""
-    var model: FileModel
-    
-    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack {

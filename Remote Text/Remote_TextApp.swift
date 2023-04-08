@@ -10,15 +10,9 @@ import SwiftUI
 @main
 struct Remote_TextApp: App {
   
-  @ObservedObject var model: FileModel
-  
-  init() {
-    self.model = FileModel()
-  }
-  
   var body: some Scene {
     WindowGroup {
-      ContentView(model: model)
+      ContentView(model: FileModel.shared)
     }
   }
 }
