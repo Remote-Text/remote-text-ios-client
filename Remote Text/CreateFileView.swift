@@ -23,6 +23,9 @@ struct CreateFileView: View {
             }.padding()
             TextEditor(text: $content)
                 .monospaced()
+                .scrollContentBackground(.hidden)
+                .background(.gray)
+                .cornerRadius(5)
                 .padding()
         }
         .navigationTitle("Create new file")

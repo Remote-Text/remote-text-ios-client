@@ -45,6 +45,9 @@ struct FileDetailView: View {
                 }.padding()
                 TextEditor(text: $content)
                     .monospaced()
+                    .scrollContentBackground(.hidden)
+                    .background(.gray)
+                    .cornerRadius(5)
                     .padding()
             }
             .navigationTitle(fileName)
