@@ -89,6 +89,14 @@ struct ContentView: View {
                             }
                         }
                     }
+                    .refreshable {
+                        #if DEBUG
+                        print("Loading files (button)")
+                        #endif
+                        isLoading = true
+                        self.files = await model.listFiles()
+                        isLoading = false
+                    }
                 }
             }
             .toolbar {
