@@ -52,23 +52,19 @@ struct ContentView: View {
                             ForEach(files) { file in
                                 if deleting {
                                     VStack {
-                                        ZStack {
+                                        ZStack(alignment: .topLeading) {
                                             Image(systemSymbol: .docText)
                                                 .font(.largeTitle)
                                                 .imageScale(.large)
-                                            VStack {
-                                                HStack {
-                                                    Button {
-                                                        Task {
-                                                            await model.deleteFile(id: id!)
-                                                        }
-                                                    } label: {
-                                                        Image(systemSymbol: .minusCircleFill)
-                                                            .foregroundColor(.red)
-                                                    }
-                                                    Spacer()
+                                            Button {
+                                                self.files = self.files.filter { $0.id != file.id }
+                                                Task {
+                                                    await model.deleteFile(id: file.id)
                                                 }
-                                                Spacer()
+                                            } label: {
+                                                Image(systemSymbol: .minusCircleFill)
+                                                    .foregroundColor(.red)
+                                                    .background(in: Circle())
                                             }
                                         }
                                         Text(file.name)
@@ -85,6 +81,11 @@ struct ContentView: View {
                                         }
                                     }
                                     .padding()
+                                    .simultaneousGesture(LongPressGesture()
+                                        .onEnded { finished in
+                                            print("Gesture complete")
+                                            self.deleting = true
+                                        })
                                 }
                             }
                         }
