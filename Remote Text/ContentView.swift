@@ -28,6 +28,7 @@ struct ContentView: View {
     let timer = Timer.publish(every: 15, on: .main, in: .common).autoconnect()
     
     @State var deleting = false
+    @State var unreachable = false
     
     @State private var taskId: UUID = .init()
     
@@ -92,7 +93,24 @@ struct ContentView: View {
     
     var body: some View {
         NavigationStack {
-            filesList
+            ZStack {
+                filesList
+                if self.unreachable {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Text("Server Unreachable")
+                                .font(.body.lowercaseSmallCaps())
+                                .padding()
+                                .background(.red)
+                                .cornerRadius(5)
+                                .transition(.asymmetric(insertion: .push(from: .bottom), removal: .scale))
+                            Spacer()
+                        }
+                    }
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     if isLoading {
@@ -106,6 +124,16 @@ struct ContentView: View {
                         }
                     }
                 }
+//                if self.unreachable {
+//                    ToolbarItem(placement: .bottomBar) {
+//                        Text("Server Unreachable")
+//                            .font(.body.lowercaseSmallCaps())
+//                            .padding()
+//                            .background(.red)
+//                            .cornerRadius(5)
+//                            .transition(.asymmetric(insertion: .push(from: .bottom), removal: .scale))
+//                    }
+//                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if deleting {
                         Button {
@@ -132,9 +160,21 @@ struct ContentView: View {
             self.isLoading = true
             do {
                 self.files = try await model.listFiles()
+                withAnimation {
+                    self.unreachable = false
+                }
                 print("success")
+            } catch let error as URLError {
+                switch error.code {
+                case URLError.cannotConnectToHost:
+                    withAnimation {
+                        self.unreachable = true
+                    }
+                default:
+                    print("URLError \(error.code)")
+                }
             } catch let error {
-                print(error)
+                print("Unknown error type: \(type(of: error))")
             }
             self.isLoading = false
         }
