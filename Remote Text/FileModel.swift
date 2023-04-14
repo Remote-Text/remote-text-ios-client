@@ -29,9 +29,9 @@ class FileModel: ObservableObject {
         return urlRequest
     }
     
-    func listFiles() async -> [FileSummary] {
-        let urlRequest = try! request(to: "listFiles", with: nil)
-        let (data, response) = try! await URLSession.shared.data(for: urlRequest)
+    func listFiles() async throws -> [FileSummary] {
+        let urlRequest = try request(to: "listFiles", with: nil)
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
         
         guard let response = response as? HTTPURLResponse else {
             fatalError("Response is not HTTPResponse")
@@ -47,7 +47,7 @@ class FileModel: ObservableObject {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
         
-        let files = try! decoder.decode([FileSummary].self, from: data)
+        let files = try decoder.decode([FileSummary].self, from: data)
         
         return files
     }

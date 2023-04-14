@@ -29,97 +29,80 @@ struct ContentView: View {
     
     @State var deleting = false
     
-    var body: some View {
-        NavigationStack {
-            Group {
-                if files.isEmpty {
-                    Text("No Files")
-                        .font(.body.lowercaseSmallCaps())
-                        .foregroundColor(.gray)
-                        .onAppear {
-                            Task {
-                                #if DEBUG
-                                    print("Loading files (onAppear)")
-                                #endif
-                                isLoading = true
-                                self.files = await model.listFiles()
-                                isLoading = false
-                            }
-                        }
-                } else {
-                    ScrollView(.vertical) {
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))]) {
-                            ForEach(files) { file in
-                                if deleting {
-                                    VStack {
-                                        ZStack(alignment: .topLeading) {
-                                            Image(systemSymbol: .docText)
-                                                .font(.largeTitle)
-                                                .imageScale(.large)
-                                            Button {
-                                                self.files = self.files.filter { $0.id != file.id }
-                                                Task {
-                                                    await model.deleteFile(id: file.id)
-                                                }
-                                            } label: {
-                                                Image(systemSymbol: .minusCircleFill)
-                                                    .foregroundColor(.red)
-                                                    .background(in: Circle())
+    @State private var taskId: UUID = .init()
+    
+    var filesList: some View {
+        Group {
+            if files.isEmpty {
+                Text("No Files")
+                    .font(.body.lowercaseSmallCaps())
+                    .foregroundColor(.gray)
+            } else {
+                ScrollView(.vertical) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 150))]) {
+                        ForEach(files) { file in
+                            if deleting {
+                                VStack {
+                                    ZStack(alignment: .topLeading) {
+                                        Image(systemSymbol: .docText)
+                                            .font(.largeTitle)
+                                            .imageScale(.large)
+                                        Button {
+                                            self.files = self.files.filter { $0.id != file.id }
+                                            Task {
+                                                await model.deleteFile(id: file.id)
                                             }
+                                        } label: {
+                                            Image(systemSymbol: .minusCircleFill)
+                                                .foregroundColor(.red)
+                                                .background(in: Circle())
                                         }
+                                    }
+                                    Text(file.name)
+                                }
+                                .padding()
+                            } else {
+                                NavigationLink {
+                                    FileDetailView(file, model)
+                                } label: {
+                                    VStack {
+                                        Image(systemSymbol: .docText)
+                                            .font(.largeTitle)
+                                            .imageScale(.large)
                                         Text(file.name)
                                     }
-                                } else {
-                                    NavigationLink {
-                                        FileDetailView(file, model)
-                                    } label: {
-                                        VStack {
-                                            Image(systemSymbol: .docText)
-                                                .font(.largeTitle)
-                                                .imageScale(.large)
-                                            Text(file.name)
-                                        }
-                                    }
-                                    .padding()
-                                    .simultaneousGesture(LongPressGesture()
-                                        .onEnded { finished in
-                                            print("Gesture complete")
-                                            self.deleting = true
-                                        })
                                 }
+                                .padding()
+                                .simultaneousGesture(LongPressGesture()
+                                    .onEnded { finished in
+                                        print("Gesture complete")
+                                        self.deleting = true
+                                    })
                             }
                         }
-                    }
-                    .refreshable {
-                        #if DEBUG
-                        print("Loading files (button)")
-                        #endif
-                        isLoading = true
-                        self.files = await model.listFiles()
-                        isLoading = false
                     }
                 }
             }
+        }
+        .refreshable {
+            print("Loading files (drag)")
+            taskId = .init()
+        }
+    }
+    
+    var body: some View {
+        NavigationStack {
+            filesList
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    if deleting {
-                        
+                    if isLoading {
+                        ProgressView()
                     } else {
-                        if isLoading {
-                            ProgressView()
-                        } else {
-                            Button {
-                                Task {
-                                    #if DEBUG
-                                    print("Loading files (button)")
-                                    #endif
-                                    isLoading = true
-                                    self.files = await model.listFiles()
-                                    isLoading = false
-                                }
-                            } label: {
-                                Image(systemSymbol: .arrowClockwise)
-                            }
+                        Button {
+                            print("Loading files (button)")
+                            self.taskId = .init()
+                        } label: {
+                            Image(systemSymbol: .arrowClockwise)
                         }
                     }
                 }
@@ -141,14 +124,19 @@ struct ContentView: View {
             }
         }
         .onReceive(timer) { input in
-            Task {
-                #if DEBUG
-                    print("Loading files (periodic)")
-                #endif
-                self.isLoading = true
-                self.files = await model.listFiles()
-                self.isLoading = false
+            print("Loading files (periodic)")
+            self.taskId = .init()
+        }
+        .task(id: taskId) {
+            print("Rerunning task")
+            self.isLoading = true
+            do {
+                self.files = try await model.listFiles()
+                print("success")
+            } catch let error {
+                print(error)
             }
+            self.isLoading = false
         }
     }
 }
