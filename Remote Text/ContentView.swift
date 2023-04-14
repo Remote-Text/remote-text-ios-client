@@ -124,16 +124,6 @@ struct ContentView: View {
                         }
                     }
                 }
-//                if self.unreachable {
-//                    ToolbarItem(placement: .bottomBar) {
-//                        Text("Server Unreachable")
-//                            .font(.body.lowercaseSmallCaps())
-//                            .padding()
-//                            .background(.red)
-//                            .cornerRadius(5)
-//                            .transition(.asymmetric(insertion: .push(from: .bottom), removal: .scale))
-//                    }
-//                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if deleting {
                         Button {

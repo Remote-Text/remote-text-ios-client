@@ -16,8 +16,8 @@ struct File: Identifiable, Codable {
 struct FileSummary: Identifiable, Codable {
   let name: String
   let id: UUID
-  let editedTime: String
-  let createdTime: String
+  let editedTime: Date
+  let createdTime: Date
 }
 
 struct GitCommit: Codable {
