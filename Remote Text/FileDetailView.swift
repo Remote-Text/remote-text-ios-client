@@ -53,6 +53,13 @@ struct FileDetailView: View {
             .navigationTitle(fileName)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink {
+                        PreviewView(id, model, hash)
+                    } label: {
+                        Text("Preview")
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         Task {
                             await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: "main")
@@ -64,5 +71,83 @@ struct FileDetailView: View {
                 }
             }
         }
+    }
+}
+
+struct PreviewView: View {
+    private let id: UUID
+    private let model: FileModel
+    private let hash: String
+    
+    @State private var state: PreviewState = .loading
+    @State private var data: Data = Data()
+    
+    init(_ id: UUID, _ model: FileModel, _ hash: String) {
+        self.id = id
+        self.model = model
+        self.hash = hash
+    }
+    
+    enum PreviewState {
+        case loading
+        case previewFailed, previewSucceeded
+        case previewFetched
+    }
+    
+    var body: some View {
+        switch state {
+        case .loading:
+            VStack {
+                ProgressView()
+                Text("Previewing file")
+            }
+            .onAppear {
+                Task {
+                    let comp = await model.previewFile(id: id, atVersion: hash)
+                    switch comp.state {
+                    case .SUCCESS:
+                        self.state = .previewSucceeded
+                    case .FAILURE:
+                        self.state = .previewFailed
+                    }
+                }
+            }
+        case .previewFailed:
+            Text("Preview unsuccessful")
+        case .previewSucceeded:
+            VStack {
+                ProgressView()
+                Text("Fetching preview")
+            }
+            .onAppear {
+                Task {
+                    let data = await model.getPreview(id: id, atVersion: hash)
+                    self.data = data
+                    self.state = .previewFetched
+                }
+            }
+        case .previewFetched:
+            PDFKitRepresentedView(data)
+        }
+    }
+}
+
+import PDFKit
+struct PDFKitRepresentedView: UIViewRepresentable {
+    let data: Data
+
+    init(_ data: Data) {
+        self.data = data
+    }
+
+    func makeUIView(context: UIViewRepresentableContext<PDFKitRepresentedView>) -> PDFKitRepresentedView.UIViewType {
+        // Create a `PDFView` and set its `PDFDocument`.
+        let pdfView = PDFView()
+        pdfView.document = PDFDocument(data: data)
+        return pdfView
+    }
+
+    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<PDFKitRepresentedView>) {
+        // Update the view.
     }
 }

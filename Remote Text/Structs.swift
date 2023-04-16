@@ -47,9 +47,9 @@ struct GitHistory: Codable {
   let refs: [GitRef]
 }
 
-enum CompilationState: Codable {
-  case SUCCESS
-  case FAILURE
+enum CompilationState: String, Codable {
+  case SUCCESS = "SUCCESS"
+  case FAILURE = "FAILURE"
 }
 
 enum PreviewDetailType: Codable {

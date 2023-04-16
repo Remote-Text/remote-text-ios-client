@@ -170,7 +170,7 @@ class FileModel: ObservableObject {
         return output
     }
     
-    func getPreview(id: UUID, atVersion hash: String) async -> PreviewDetail {
+    func getPreview(id: UUID, atVersion hash: String) async -> Data {
         let dataToEncode = FileIDAndGitHash(id: id, hash: hash)
         let urlRequest = try! request(to: "getPreview", with: dataToEncode)
         let (data, response) = try! await URLSession.shared.data(for: urlRequest)
@@ -191,13 +191,7 @@ class FileModel: ObservableObject {
             fatalError("Got status code \(response.statusCode)")
         }
         
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        decoder.dateDecodingStrategy = .iso8601
-        
-        let output = try! decoder.decode(PreviewDetail.self, from: data)
-        
-        return output
+        return data
     }
     
     func getHistory(id: UUID) async -> GitHistory {
