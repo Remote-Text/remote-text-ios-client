@@ -10,6 +10,8 @@
 		22A1A13D29E0D3DA00D26FCC /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 22A1A13C29E0D3DA00D26FCC /* SFSafeSymbols */; };
 		22A1A13F29E0D71000D26FCC /* CreateFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A1A13E29E0D71000D26FCC /* CreateFileView.swift */; };
 		22A1A14129E0D72200D26FCC /* FileDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A1A14029E0D72200D26FCC /* FileDetailView.swift */; };
+		22FD4B8C29F3B1F000C64BC1 /* HighlightedTextEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 22FD4B8B29F3B1F000C64BC1 /* HighlightedTextEditor */; };
+		22FD4B8F29F3B40000C64BC1 /* CodeEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 22FD4B8E29F3B40000C64BC1 /* CodeEditor */; };
 		231BDB2B29DF6C980024D52C /* Remote_TextApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231BDB2A29DF6C980024D52C /* Remote_TextApp.swift */; };
 		231BDB2F29DF6C980024D52C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231BDB2E29DF6C980024D52C /* ContentView.swift */; };
 		231BDB3129DF6C990024D52C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 231BDB3029DF6C990024D52C /* Assets.xcassets */; };
@@ -36,6 +38,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				22FD4B8C29F3B1F000C64BC1 /* HighlightedTextEditor in Frameworks */,
+				22FD4B8F29F3B40000C64BC1 /* CodeEditor in Frameworks */,
 				22A1A13D29E0D3DA00D26FCC /* SFSafeSymbols in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -101,6 +105,8 @@
 			name = "Remote Text";
 			packageProductDependencies = (
 				22A1A13C29E0D3DA00D26FCC /* SFSafeSymbols */,
+				22FD4B8B29F3B1F000C64BC1 /* HighlightedTextEditor */,
+				22FD4B8E29F3B40000C64BC1 /* CodeEditor */,
 			);
 			productName = "Remote Text";
 			productReference = 231BDB2729DF6C980024D52C /* Remote Text.app */;
@@ -132,6 +138,8 @@
 			mainGroup = 231BDB1E29DF6C980024D52C;
 			packageReferences = (
 				22A1A13B29E0D3DA00D26FCC /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
+				22FD4B8A29F3B1F000C64BC1 /* XCRemoteSwiftPackageReference "HighlightedTextEditor" */,
+				22FD4B8D29F3B40000C64BC1 /* XCRemoteSwiftPackageReference "CodeEditor" */,
 			);
 			productRefGroup = 231BDB2829DF6C980024D52C /* Products */;
 			projectDirPath = "";
@@ -379,6 +387,22 @@
 				minimumVersion = 4.0.0;
 			};
 		};
+		22FD4B8A29F3B1F000C64BC1 /* XCRemoteSwiftPackageReference "HighlightedTextEditor" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kyle-n/HighlightedTextEditor";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		22FD4B8D29F3B40000C64BC1 /* XCRemoteSwiftPackageReference "CodeEditor" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ZeeZide/CodeEditor.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -386,6 +410,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 22A1A13B29E0D3DA00D26FCC /* XCRemoteSwiftPackageReference "SFSafeSymbols" */;
 			productName = SFSafeSymbols;
+		};
+		22FD4B8B29F3B1F000C64BC1 /* HighlightedTextEditor */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22FD4B8A29F3B1F000C64BC1 /* XCRemoteSwiftPackageReference "HighlightedTextEditor" */;
+			productName = HighlightedTextEditor;
+		};
+		22FD4B8E29F3B40000C64BC1 /* CodeEditor */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22FD4B8D29F3B40000C64BC1 /* XCRemoteSwiftPackageReference "CodeEditor" */;
+			productName = CodeEditor;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

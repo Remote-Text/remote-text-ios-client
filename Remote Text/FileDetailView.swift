@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import HighlightedTextEditor
+import CodeEditor
 
 struct FileDetailView: View {
     
@@ -43,18 +45,37 @@ struct FileDetailView: View {
                 TextField(text: $fileName, prompt: Text("README.md")) {
                     Text("File name")
                 }.padding()
-                TextEditor(text: $content)
-                    .monospaced()
-                    .scrollContentBackground(.hidden)
-                    .background(.gray)
-                    .cornerRadius(5)
-                    .padding()
+                switch fileName.split(separator: ".").last {
+//                case "md", "markdown":
+//                    HighlightedTextEditor(text: $content, highlightRules: .markdown)
+////                    CodeEditor(source: $content, language: .markdown)
+//                        .monospaced()
+//                        .scrollContentBackground(.hidden)
+//                        .background(.gray)
+//                        .cornerRadius(5)
+//                        .padding()
+//                case "tex":
+//                    CodeEditor(source: $content, language: .tex)
+//                        .monospaced()
+//                        .scrollContentBackground(.hidden)
+//                        .background(.gray)
+//                        .cornerRadius(5)
+//                        .padding()
+                default:
+                    TextEditor(text: $content)
+                        .monospaced()
+                        .scrollContentBackground(.hidden)
+                        .background(.gray)
+                        .cornerRadius(5)
+                        .padding()
+                }
             }
             .navigationTitle(fileName)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
-                        PreviewView(id, model, hash)
+//                        PreviewView(id, model, hash, fileName.split(separator: ".").dropLast(1).joined(separator: ".") + ".pdf")
+                        PreviewView(id, model, hash, fileName.replacing(/\.tex$/) { _ in ".pdf" })
                     } label: {
                         Text("Preview")
                     }
@@ -78,14 +99,17 @@ struct PreviewView: View {
     private let id: UUID
     private let model: FileModel
     private let hash: String
+    private let filename: String
     
     @State private var state: PreviewState = .loading
     @State private var data: Data = Data()
+    @State private var log: String = ""
     
-    init(_ id: UUID, _ model: FileModel, _ hash: String) {
+    init(_ id: UUID, _ model: FileModel, _ hash: String, _ filename: String) {
         self.id = id
         self.model = model
         self.hash = hash
+        self.filename = filename
     }
     
     enum PreviewState {
@@ -101,6 +125,7 @@ struct PreviewView: View {
                 ProgressView()
                 Text("Previewing file")
             }
+            .navigationTitle("Previewing file")
             .onAppear {
                 Task {
                     let comp = await model.previewFile(id: id, atVersion: hash)
@@ -109,16 +134,26 @@ struct PreviewView: View {
                         self.state = .previewSucceeded
                     case .FAILURE:
                         self.state = .previewFailed
+                        self.log = comp.log
                     }
                 }
             }
         case .previewFailed:
-            Text("Preview unsuccessful")
+            VStack {
+                Text("Preview unsuccessful")
+                    .font(.title)
+                ScrollView(.vertical) {
+                    Text(log)
+                        .lineLimit(nil)
+                }
+            }
+            .navigationTitle("Preview unsuccessful")
         case .previewSucceeded:
             VStack {
                 ProgressView()
                 Text("Fetching preview")
             }
+            .navigationTitle("Fetching preview")
             .onAppear {
                 Task {
                     let data = await model.getPreview(id: id, atVersion: hash)
@@ -128,6 +163,7 @@ struct PreviewView: View {
             }
         case .previewFetched:
             PDFKitRepresentedView(data)
+                .navigationTitle(filename)
         }
     }
 }
