@@ -8,6 +8,7 @@
 import SwiftUI
 import HighlightedTextEditor
 import CodeEditor
+import PDFKit
 
 struct FileDetailView: View {
     
@@ -104,6 +105,9 @@ struct PreviewView: View {
     @State private var state: PreviewState = .loading
     @State private var data: Data = Data()
     @State private var log: String = ""
+  
+    @State private var document: PDFDocument = PDFDocument()
+    @State private var previewImage: Image = Image("")
     
     init(_ id: UUID, _ model: FileModel, _ hash: String, _ filename: String) {
         self.id = id
@@ -164,11 +168,31 @@ struct PreviewView: View {
         case .previewFetched:
             PDFKitRepresentedView(data)
                 .navigationTitle(filename)
+                .toolbar {
+                  ToolbarItem(placement: .navigationBarTrailing) {
+                    let _ = print(document.documentAttributes!)
+                    ShareLink(item: document,
+                              preview: SharePreview(
+                                filename,
+                                image: previewImage
+                              )
+                    )
+                  }
+                }
+                .onAppear {
+                  guard let pdf = PDFDocument(data: data),
+                        let image = pdf.imageRepresenation else {
+                    fatalError("something went wrong...")
+                  }
+                  
+                  pdf.documentAttributes![PDFDocumentAttribute.titleAttribute] = filename
+                  self.document = pdf
+                  self.previewImage = Image(uiImage: image)
+                }
         }
     }
 }
 
-import PDFKit
 struct PDFKitRepresentedView: UIViewRepresentable {
     let data: Data
 
