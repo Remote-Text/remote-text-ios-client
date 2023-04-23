@@ -30,10 +30,24 @@ extension PDFDocument: Transferable {
         return Data()
       }
     }
-    .suggestedFileName("Output")
+    FileRepresentation(exportedContentType: .pdf) { pdf in
+      guard let data = pdf.dataRepresentation() else {
+        fatalError("Could not create a pdf file")
+      }
+      
+      var fileURL = FileManager.default
+        .temporaryDirectory
+      
+      if let title = pdf.title {
+        fileURL = fileURL
+          .appendingPathComponent(title)
+      }
+      
+      try data.write(to: fileURL)
+      return SentTransferredFile(fileURL)
+    }
   }
   
-  // TODO: how to make this a suggested name for transferRepresentation?
   public var title: String? {
     guard let attributes = self.documentAttributes,
           let titleAttribute = attributes[PDFDocumentAttribute.titleAttribute]
