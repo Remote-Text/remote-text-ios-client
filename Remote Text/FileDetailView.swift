@@ -9,6 +9,7 @@ import SwiftUI
 import HighlightedTextEditor
 import CodeEditor
 import PDFKit
+import WebKit
 
 struct FileDetailView: View {
     
@@ -76,7 +77,7 @@ struct FileDetailView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
 //                        PreviewView(id, model, hash, fileName.split(separator: ".").dropLast(1).joined(separator: ".") + ".pdf")
-                        PreviewView(id, model, hash, fileName.replacing(/\.tex$/) { _ in ".pdf" })
+                        PreviewView(id, model, hash, fileName.replacing(/\..+$/, with: ".html").replacing(/\.tex$/, with: ".pdf"))
                     } label: {
                         Text("Preview")
                     }
@@ -105,6 +106,7 @@ struct PreviewView: View {
     @State private var state: PreviewState = .loading
     @State private var data: Data = Data()
     @State private var log: String = ""
+    @State private var type: PreviewType = .HTML
   
     @State private var document: PDFDocument = PDFDocument()
     @State private var previewImage: Image = Image("")
@@ -136,6 +138,7 @@ struct PreviewView: View {
                     switch comp.state {
                     case .SUCCESS:
                         self.state = .previewSucceeded
+                        self.log = comp.log
                     case .FAILURE:
                         self.state = .previewFailed
                         self.log = comp.log
@@ -160,35 +163,43 @@ struct PreviewView: View {
             .navigationTitle("Fetching preview")
             .onAppear {
                 Task {
-                    let data = await model.getPreview(id: id, atVersion: hash)
+                    let (data, type) = await model.getPreview(id: id, atVersion: hash)
                     self.data = data
                     self.state = .previewFetched
+                    self.type = type
                 }
             }
         case .previewFetched:
-            PDFKitRepresentedView(data)
-                .navigationTitle(filename)
-                .toolbar {
-                  ToolbarItem(placement: .navigationBarTrailing) {
-                    let _ = print(document.documentAttributes!)
-                    ShareLink(item: document,
-                              preview: SharePreview(
-                                filename,
-                                image: previewImage
-                              )
-                    )
-                  }
-                }
-                .onAppear {
-                  guard let pdf = PDFDocument(data: data),
-                        let image = pdf.imageRepresenation else {
-                    fatalError("something went wrong...")
-                  }
-                  
-                  pdf.documentAttributes![PDFDocumentAttribute.titleAttribute] = filename
-                  self.document = pdf
-                  self.previewImage = Image(uiImage: image)
-                }
+            switch self.type {
+            case .PDF:
+                PDFKitRepresentedView(data)
+                    .navigationTitle(filename)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            let _ = print(document.documentAttributes!)
+                            ShareLink(item: document,
+                                      preview: SharePreview(
+                                        filename,
+                                        image: previewImage
+                                      )
+                            )
+                        }
+                    }
+                    .onAppear {
+                        guard let pdf = PDFDocument(data: data),
+                              let image = pdf.imageRepresenation else {
+                            fatalError("something went wrong...")
+                        }
+                        
+                        pdf.documentAttributes![PDFDocumentAttribute.titleAttribute] = filename
+                        self.document = pdf
+                        self.previewImage = Image(uiImage: image)
+                    }
+            case .HTML:
+                WebView(self.data)
+                    .navigationTitle(filename)
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+            }
         }
     }
 }
@@ -209,5 +220,20 @@ struct PDFKitRepresentedView: UIViewRepresentable {
 
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<PDFKitRepresentedView>) {
         // Update the view.
+    }
+}
+struct WebView: UIViewRepresentable {
+    let source: String
+    
+    init(_ data: Data) {
+        self.source = String(bytes: data, encoding: .utf8)!
+    }
+    
+    func makeUIView(context: Context) -> WKWebView {
+        return WKWebView()
+    }
+    
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        uiView.loadHTMLString(source, baseURL: nil)
     }
 }

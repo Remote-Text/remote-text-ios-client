@@ -30,13 +30,6 @@ struct CompilationOutput: Codable {
   let state: CompilationState
 }
 
-struct PreviewDetail: Codable {
-  let id: UUID
-  let name: String
-  let data: String
-  let type: PreviewDetailType
-}
-
 struct GitRef: Codable {
   let name: String
   let hash: String
@@ -52,7 +45,7 @@ enum CompilationState: String, Codable {
   case FAILURE = "FAILURE"
 }
 
-enum PreviewDetailType: Codable {
+enum PreviewType {
   case PDF
   case HTML
 }
