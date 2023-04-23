@@ -108,7 +108,8 @@ struct PreviewView: View {
     @State private var log: String = ""
     @State private var type: PreviewType = .HTML
   
-    @State private var document: PDFDocument = PDFDocument()
+    @State private var pdfDocument: PDFDocument = PDFDocument()
+    @State private var htmlDocument: HTMLDocument = HTMLDocument()
     @State private var previewImage: Image = Image("")
     
     init(_ id: UUID, _ model: FileModel, _ hash: String, _ filename: String) {
@@ -176,8 +177,7 @@ struct PreviewView: View {
                     .navigationTitle(filename)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            let _ = print(document.documentAttributes!)
-                            ShareLink(item: document,
+                            ShareLink(item: pdfDocument,
                                       preview: SharePreview(
                                         filename,
                                         image: previewImage
@@ -192,13 +192,25 @@ struct PreviewView: View {
                         }
                         
                         pdf.documentAttributes![PDFDocumentAttribute.titleAttribute] = filename
-                        self.document = pdf
+                        self.pdfDocument = pdf
                         self.previewImage = Image(uiImage: image)
                     }
             case .HTML:
                 WebView(self.data)
                     .navigationTitle(filename)
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                          ShareLink(item: htmlDocument,
+                                      preview: SharePreview(
+                                        filename
+                                      )
+                            )
+                        }
+                    }
+                    .onAppear {
+                      self.htmlDocument = HTMLDocument(title: filename, source: data)
+                    }
             }
         }
     }

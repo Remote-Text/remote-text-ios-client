@@ -19,6 +19,7 @@
 		231BDB3429DF6C990024D52C /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 231BDB3329DF6C990024D52C /* Preview Assets.xcassets */; };
 		231BDB3C29DF6E810024D52C /* FileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231BDB3B29DF6E810024D52C /* FileModel.swift */; };
 		231BDB3E29DF6EAB0024D52C /* Structs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 231BDB3D29DF6EAB0024D52C /* Structs.swift */; };
+		2365DC8C29F5E175007E8C12 /* HtmlDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2365DC8B29F5E175007E8C12 /* HtmlDocument.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		231BDB3529DF6C990024D52C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		231BDB3B29DF6E810024D52C /* FileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileModel.swift; sourceTree = "<group>"; };
 		231BDB3D29DF6EAB0024D52C /* Structs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structs.swift; sourceTree = "<group>"; };
+		2365DC8B29F5E175007E8C12 /* HtmlDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlDocument.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 				231BDB2E29DF6C980024D52C /* ContentView.swift */,
 				231BDB3B29DF6E810024D52C /* FileModel.swift */,
 				2266D60029F510E800DC8128 /* PDFDocument+Transferable.swift */,
+				2365DC8B29F5E175007E8C12 /* HtmlDocument.swift */,
 				231BDB3D29DF6EAB0024D52C /* Structs.swift */,
 				231BDB3029DF6C990024D52C /* Assets.xcassets */,
 				231BDB3529DF6C990024D52C /* Info.plist */,
@@ -171,6 +174,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				22A1A13F29E0D71000D26FCC /* CreateFileView.swift in Sources */,
+				2365DC8C29F5E175007E8C12 /* HtmlDocument.swift in Sources */,
 				22A1A14129E0D72200D26FCC /* FileDetailView.swift in Sources */,
 				231BDB2B29DF6C980024D52C /* Remote_TextApp.swift in Sources */,
 				2266D60129F510E800DC8128 /* PDFDocument+Transferable.swift in Sources */,
