@@ -76,8 +76,7 @@ struct FileDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
-//                        PreviewView(id, model, hash, fileName.split(separator: ".").dropLast(1).joined(separator: ".") + ".pdf")
-                        PreviewView(id, model, hash, fileName.replacing(/\..+$/, with: ".html").replacing(/\.tex$/, with: ".pdf"))
+                        PreviewView(id, model, hash, fileName)
                     } label: {
                         Text("Preview")
                     }
@@ -174,12 +173,12 @@ struct PreviewView: View {
             switch self.type {
             case .PDF:
                 PDFKitRepresentedView(data)
-                    .navigationTitle(filename)
+                    .navigationTitle(filename.replacing(/\.tex$/, with: ".pdf"))
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             ShareLink(item: pdfDocument,
                                       preview: SharePreview(
-                                        filename,
+                                        filename.replacing(/\..+$/, with: ".html"),
                                         image: previewImage
                                       )
                             )
@@ -197,13 +196,13 @@ struct PreviewView: View {
                     }
             case .HTML:
                 WebView(self.data)
-                    .navigationTitle(filename)
+                    .navigationTitle(filename.replacing(/\..+$/, with: ".html"))
                     .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
                           ShareLink(item: htmlDocument,
                                       preview: SharePreview(
-                                        filename
+                                        filename.replacing(/\..+$/, with: ".html")
                                       )
                             )
                         }
