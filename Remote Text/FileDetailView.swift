@@ -20,6 +20,7 @@ struct FileDetailView: View {
     @State var fileName = ""
     @State var content = ""
     @State private var loading = true
+    @State private var initialContent = ""
   
     private let id: UUID
 
@@ -38,6 +39,7 @@ struct FileDetailView: View {
                         self.hash = history.refs.first { $0.name == "main" }!.hash
                         let file = await model.getFile(id: id, atVersion: self.hash)
                         self.fileName = file.name
+                        self.initialContent = file.content
                         self.content = file.content
                         self.loading = false
                     }
@@ -74,22 +76,25 @@ struct FileDetailView: View {
             }
             .navigationTitle(fileName)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink {
-                        PreviewView(id, model, hash, fileName)
-                    } label: {
-                        Text("Preview")
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        Task {
-                            await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: "main")
-                            self.dismiss.callAsFunction()
+                if self.initialContent == self.content {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink {
+                            PreviewView(id, model, hash, fileName)
+                        } label: {
+                            Text("Preview")
                         }
-                    } label: {
-                        Text("Save")
-                    }.disabled(fileName.isEmpty)
+                    }
+                } else {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            Task {
+                                await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: "main")
+                                self.dismiss.callAsFunction()
+                            }
+                        } label: {
+                            Text("Save")
+                        }.disabled(fileName.isEmpty)
+                    }
                 }
             }
         }
