@@ -183,7 +183,7 @@ struct PreviewView: View {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             ShareLink(item: pdfDocument,
                                       preview: SharePreview(
-                                        filename.replacing(/\..+$/, with: ".html"),
+                                        filename.replacing(/\.tex$/, with: ".pdf"),
                                         image: previewImage
                                       )
                             )
