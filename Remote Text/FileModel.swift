@@ -12,7 +12,8 @@ class FileModel: ObservableObject {
   
     static let shared = FileModel()
     
-    @Published var path = NavigationPath()
+//    @Published var path = NavigationPath()
+    @Published var path: [ContentView.Navigation] = []
     
     private func request(to endpoint: String, with data: Codable?) throws -> URLRequest {
         let BASE_URL = "http://localhost:3030/api"
