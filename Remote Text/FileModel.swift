@@ -6,10 +6,13 @@
 //
 
 import Foundation
+import SwiftUI
 
 class FileModel: ObservableObject {
   
     static let shared = FileModel()
+    
+    @Published var path = NavigationPath()
     
     private func request(to endpoint: String, with data: Codable?) throws -> URLRequest {
         let BASE_URL = "http://localhost:3030/api"

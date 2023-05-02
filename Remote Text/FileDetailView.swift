@@ -10,6 +10,7 @@ import HighlightedTextEditor
 import CodeEditor
 import PDFKit
 import WebKit
+import Combine
 
 struct FileDetailView: View {
     
@@ -21,6 +22,12 @@ struct FileDetailView: View {
     @State var content = ""
     @State private var loading = true
     @State private var initialContent = ""
+    
+////    @State private var triggerPreview = PassthroughSubject<(()
+//    @State private var jumpToPreview = JumpToPreview.waiting
+//    private enum JumpToPreview {
+//        case waiting, engaged
+//    }
   
     private let id: UUID
 
@@ -30,72 +37,113 @@ struct FileDetailView: View {
         self.model = model
     }
     
+    enum MyNav {
+        case preview
+    }
+    
     var body: some View {
-        if loading {
-            Image(systemSymbol: .arrowDownDoc).scaledToFit()
-                .onAppear {
-                    Task {
-                        let history = await model.getHistory(id: id)
-                        self.hash = history.refs.first { $0.name == "main" }!.hash
-                        let file = await model.getFile(id: id, atVersion: self.hash)
-                        self.fileName = file.name
-                        self.initialContent = file.content
-                        self.content = file.content
-                        self.loading = false
-                    }
-                }
-        } else {
-            VStack {
-                TextField(text: $fileName, prompt: Text("README.md")) {
-                    Text("File name")
-                }.padding()
-                switch fileName.split(separator: ".").last {
-//                case "md", "markdown":
-//                    HighlightedTextEditor(text: $content, highlightRules: .markdown)
-////                    CodeEditor(source: $content, language: .markdown)
-//                        .monospaced()
-//                        .scrollContentBackground(.hidden)
-//                        .background(.gray)
-//                        .cornerRadius(5)
-//                        .padding()
-//                case "tex":
-//                    CodeEditor(source: $content, language: .tex)
-//                        .monospaced()
-//                        .scrollContentBackground(.hidden)
-//                        .background(.gray)
-//                        .cornerRadius(5)
-//                        .padding()
-                default:
-                    TextEditor(text: $content)
-                        .monospaced()
-                        .scrollContentBackground(.hidden)
-                        .background(.gray)
-                        .cornerRadius(5)
-                        .padding()
-                }
-            }
-            .navigationTitle(fileName)
-            .toolbar {
-                if self.initialContent == self.content {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink {
-                            PreviewView(id, model, hash, fileName)
-                        } label: {
-                            Text("Preview")
+        Group {
+            if loading {
+                Image(systemSymbol: .arrowDownDoc).scaledToFit()
+                    .onAppear {
+                        Task {
+                            let history = await model.getHistory(id: id)
+                            self.hash = history.refs.first { $0.name == "main" }!.hash
+                            let file = await model.getFile(id: id, atVersion: self.hash)
+                            self.fileName = file.name
+                            self.initialContent = file.content
+                            self.content = file.content
+                            self.loading = false
                         }
                     }
-                } else {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            Task {
-                                await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: "main")
-                                self.dismiss.callAsFunction()
-                            }
-                        } label: {
-                            Text("Save")
-                        }.disabled(fileName.isEmpty)
+            } else {
+                VStack {
+                    TextField(text: $fileName, prompt: Text("README.md")) {
+                        Text("File name")
+                    }.padding()
+                    switch fileName.split(separator: ".").last {
+                        //                case "md", "markdown":
+                        //                    HighlightedTextEditor(text: $content, highlightRules: .markdown)
+                        ////                    CodeEditor(source: $content, language: .markdown)
+                        //                        .monospaced()
+                        //                        .scrollContentBackground(.hidden)
+                        //                        .background(.gray)
+                        //                        .cornerRadius(5)
+                        //                        .padding()
+                        //                case "tex":
+                        //                    CodeEditor(source: $content, language: .tex)
+                        //                        .monospaced()
+                        //                        .scrollContentBackground(.hidden)
+                        //                        .background(.gray)
+                        //                        .cornerRadius(5)
+                        //                        .padding()
+                    default:
+                        TextEditor(text: $content)
+                            .monospaced()
+                            .scrollContentBackground(.hidden)
+                            .background(.gray)
+                            .cornerRadius(5)
+                            .padding()
                     }
                 }
+                .navigationTitle(fileName)
+                .toolbar {
+                    if self.initialContent == self.content {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            NavigationLink {
+                                PreviewView(id, model, hash, fileName)
+                            } label: {
+                                Text("Preview")
+                            }
+                        }
+                    } else {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Menu {
+                                Button {
+                                    Task {
+                                        let res = await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: "main")
+                                        self.hash = res.hash
+                                        self.initialContent = self.content
+                                    }
+                                } label: {
+                                    Text("Save")
+                                }
+                                Button {
+                                    Task {
+                                        await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: "main")
+                                        self.dismiss.callAsFunction()
+                                    }
+                                } label: {
+                                    Text("Save & Close")
+                                }
+                            } label: {
+//                                NavigationLink(tag: JumpToPreview.engaged, selection: $jumpToPreview) {
+//                                    PreviewView(id, model, hash, fileName)
+//                                } label: {
+//
+//                                }
+                                Text("Save & Preview")
+                            } primaryAction: {
+                                Task {
+                                    let res = await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: "main")
+                                    self.hash = res.hash
+                                    self.initialContent = self.content
+                                    //How to add onto navigation stack?
+                                    dump(self.model.path)
+                                    self.model.path.append(MyNav.preview)
+                                    dump(self.model.path)
+//                                    NavigationLink.init(value: <#T##Hashable?#>, label: <#T##() -> View#>)
+                                }
+                            }
+                            .disabled(fileName.isEmpty)
+                        }
+                    }
+                }
+            }
+        }.navigationDestination(for: MyNav.self) { myNav in
+            switch myNav {
+            case .preview:
+                PreviewView(id, model, hash, fileName)
             }
         }
     }

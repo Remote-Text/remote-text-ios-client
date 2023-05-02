@@ -32,6 +32,8 @@ struct ContentView: View {
     
     @State private var taskId: UUID = .init()
     
+//    @State private var navPath = NavigationPath()
+    
     var filesList: some View {
         Group {
             if files.isEmpty {
@@ -92,7 +94,7 @@ struct ContentView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $model.path) {
             ZStack {
                 filesList
                 if self.unreachable {
