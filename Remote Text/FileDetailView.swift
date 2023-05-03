@@ -16,6 +16,7 @@ struct FileDetailView: View {
     @State var fileName = ""
     @State var content = ""
     @State private var loading = true
+    @State private var initialFilename = ""
     @State private var initialContent = ""
   
     private let id: UUID
@@ -35,8 +36,9 @@ struct FileDetailView: View {
                             self.hash = history.refs.first { $0.name == "main" }!.hash
                             let file = await model.getFile(id: id, atVersion: self.hash)
                             self.fileName = file.name
-                            self.initialContent = file.content
                             self.content = file.content
+                            self.initialFilename = file.name
+                            self.initialContent = file.content
                             self.loading = false
                         }
                     }
@@ -72,7 +74,7 @@ struct FileDetailView: View {
                 }
                 .navigationTitle(fileName)
                 .toolbar {
-                    if self.initialContent == self.content {
+                    if self.initialContent == self.content && self.initialFilename == self.fileName {
                         ToolbarItem(placement: .navigationBarTrailing) {
                             NavigationLink(value: ContentView.Navigation.previewFile(id: id, hash: hash, filename: fileName)) {
                                 Text("Preview")
