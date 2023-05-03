@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		221B22AE2A010F490042B0AB /* FileListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221B22AD2A010F490042B0AB /* FileListView.swift */; };
+		221B22B02A0110010042B0AB /* ServerUnreachable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221B22AF2A0110010042B0AB /* ServerUnreachable.swift */; };
+		2253923E2A01A76B00DFB01B /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2253923D2A01A76B00DFB01B /* PreviewView.swift */; };
 		2266D60129F510E800DC8128 /* PDFDocument+Transferable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2266D60029F510E800DC8128 /* PDFDocument+Transferable.swift */; };
 		22A1A13D29E0D3DA00D26FCC /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 22A1A13C29E0D3DA00D26FCC /* SFSafeSymbols */; };
 		22A1A13F29E0D71000D26FCC /* CreateFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A1A13E29E0D71000D26FCC /* CreateFileView.swift */; };
@@ -23,6 +26,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		221B22AD2A010F490042B0AB /* FileListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileListView.swift; sourceTree = "<group>"; };
+		221B22AF2A0110010042B0AB /* ServerUnreachable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUnreachable.swift; sourceTree = "<group>"; };
+		2253923D2A01A76B00DFB01B /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		2266D60029F510E800DC8128 /* PDFDocument+Transferable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PDFDocument+Transferable.swift"; sourceTree = "<group>"; };
 		22A1A13E29E0D71000D26FCC /* CreateFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateFileView.swift; sourceTree = "<group>"; };
 		22A1A14029E0D72200D26FCC /* FileDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileDetailView.swift; sourceTree = "<group>"; };
@@ -81,6 +87,9 @@
 				231BDB3229DF6C990024D52C /* Preview Content */,
 				22A1A13E29E0D71000D26FCC /* CreateFileView.swift */,
 				22A1A14029E0D72200D26FCC /* FileDetailView.swift */,
+				221B22AD2A010F490042B0AB /* FileListView.swift */,
+				221B22AF2A0110010042B0AB /* ServerUnreachable.swift */,
+				2253923D2A01A76B00DFB01B /* PreviewView.swift */,
 			);
 			path = "Remote Text";
 			sourceTree = "<group>";
@@ -176,11 +185,14 @@
 				22A1A13F29E0D71000D26FCC /* CreateFileView.swift in Sources */,
 				2365DC8C29F5E175007E8C12 /* HtmlDocument.swift in Sources */,
 				22A1A14129E0D72200D26FCC /* FileDetailView.swift in Sources */,
+				2253923E2A01A76B00DFB01B /* PreviewView.swift in Sources */,
 				231BDB2B29DF6C980024D52C /* Remote_TextApp.swift in Sources */,
 				2266D60129F510E800DC8128 /* PDFDocument+Transferable.swift in Sources */,
+				221B22AE2A010F490042B0AB /* FileListView.swift in Sources */,
 				231BDB3E29DF6EAB0024D52C /* Structs.swift in Sources */,
 				231BDB3C29DF6E810024D52C /* FileModel.swift in Sources */,
 				231BDB2F29DF6C980024D52C /* ContentView.swift in Sources */,
+				221B22B02A0110010042B0AB /* ServerUnreachable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

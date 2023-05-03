@@ -13,7 +13,7 @@ struct File: Identifiable, Codable {
   let content: String
 }
 
-struct FileSummary: Identifiable, Codable {
+struct FileSummary: Identifiable, Codable, Hashable {
   let name: String
   let id: UUID
   let editedTime: Date

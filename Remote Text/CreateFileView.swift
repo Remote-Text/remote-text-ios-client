@@ -8,10 +8,7 @@
 import SwiftUI
 
 struct CreateFileView: View {
-  
-    @Environment(\.dismiss) var dismiss
-  
-    @ObservedObject var model: FileModel
+    @EnvironmentObject var model: FileModel
   
     @State var fileName = ""
     @State var content = ""
@@ -31,14 +28,37 @@ struct CreateFileView: View {
         .navigationTitle("Create new file")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    Task {
-                        await model.createFile(named: fileName, withContent: content)
-                        self.dismiss.callAsFunction()
+                Menu {
+                    Button {
+                        Task {
+                            let newFile = await model.createFile(named: fileName, withContent: content)
+                            self.model.path.removeLast()
+                            self.model.path.append(ContentView.Navigation.fileEditor(file: newFile))
+                        }
+                    } label: {
+                        Text("Create")
+                    }
+                    Button {
+                        Task {
+                            await model.createFile(named: fileName, withContent: content)
+                            self.model.path.removeLast()
+                        }
+                    } label: {
+                        Text("Create & Close")
                     }
                 } label: {
-                    Text("Done")
-                }.disabled(fileName.isEmpty)
+                    Text("Create & Preview")
+                } primaryAction: {
+                    Task {
+                        let newFile = await model.createFile(named: fileName, withContent: content)
+                        let hash = await model.getHistory(id: newFile.id).commits[0].hash
+                        self.model.path.removeLast()
+                        self.model.path.append(ContentView.Navigation.fileEditor(file: newFile))
+                        
+                        self.model.path.append(ContentView.Navigation.previewFile(id: newFile.id, hash: hash, filename: newFile.name))
+                    }
+                }
+                .disabled(fileName.isEmpty)
             }
         }
     }
