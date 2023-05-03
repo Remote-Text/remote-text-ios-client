@@ -23,7 +23,8 @@ struct ContentView: View {
     
     public enum Navigation: Hashable {
 //        case listFiles
-        case fileEditor(file: FileSummary)
+        case fileHistory(id: UUID)
+        case fileEditor(id: UUID, hash: String, branches: [String])
         case fileCreator
         case previewFile(id: UUID, hash: String, filename: String)
     }
@@ -33,9 +34,10 @@ struct ContentView: View {
             FileListView(files: self.$files)
                 .navigationDestination(for: Navigation.self) { nav in
                     switch nav {
-//                    case .listFiles
-                    case .fileEditor(let file):
-                        FileDetailView(file)
+                    case .fileHistory(let id):
+                        FileHistoryView(id)
+                    case let .fileEditor(id, hash, branches):
+                        FileDetailView(id: id, hash: hash, branches: branches)
                     case .fileCreator:
                         CreateFileView()
                     case let .previewFile(id, hash, filename):

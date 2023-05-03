@@ -85,7 +85,8 @@ struct FileListView: View {
                                 }
                                 .padding()
                             } else {
-                                NavigationLink(value: ContentView.Navigation.fileEditor(file: file)) {
+//                                NavigationLink(value: ContentView.Navigation.fileEditor(file: file)) {
+                                NavigationLink(value: ContentView.Navigation.fileHistory(id: file.id)) {
                                     VStack {
                                         Image(systemSymbol: .docText)
                                             .font(.largeTitle)

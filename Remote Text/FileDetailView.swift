@@ -12,7 +12,6 @@ import CodeEditor
 struct FileDetailView: View {
     @EnvironmentObject var model: FileModel
   
-    @State var hash: String = ""
     @State var fileName = ""
     @State var content = ""
     @State private var loading = true
@@ -20,10 +19,40 @@ struct FileDetailView: View {
     @State private var initialContent = ""
   
     private let id: UUID
-
-    init(_ file: FileSummary) {
-        self.id = file.id
-        self._fileName = State(wrappedValue: file.name)
+    private let hash: String
+    
+    private let branchOptions: [String]
+    enum Branch: Hashable {
+        case none
+        case branch(name: String)
+    }
+    @State private var branch: String = ""
+    private var branchSelection: Binding<Branch> {
+        .init(
+            get: {
+                if self.branchOptions.contains(self.branch) {
+                    return .branch(name: self.branch)
+                } else {
+                    return .none
+                }
+            }, set: { newValue in
+                if case .branch(let name) = newValue {
+                    self.branch = name
+                } else {
+                    //Now editing branch name
+                    self.branch = ""
+                }
+            }
+        )
+    }
+    
+    init(id file: UUID, hash: String, branches: [String]) {
+        self.id = file
+        self.hash = hash
+        self.branchOptions = branches
+        if let first = branches.first {
+            self._branch = State(wrappedValue: first)
+        }
     }
     
     var body: some View {
@@ -32,8 +61,6 @@ struct FileDetailView: View {
                 Image(systemSymbol: .arrowDownDoc).scaledToFit()
                     .onAppear {
                         Task {
-                            let history = await model.getHistory(id: id)
-                            self.hash = history.refs.first { $0.name == "main" }!.hash
                             let file = await model.getFile(id: id, atVersion: self.hash)
                             self.fileName = file.name
                             self.content = file.content
@@ -44,9 +71,24 @@ struct FileDetailView: View {
                     }
             } else {
                 VStack {
-                    TextField(text: $fileName, prompt: Text("README.md")) {
-                        Text("File name")
-                    }.padding()
+                    HStack {
+                        Text("Filename:").bold()
+                        TextField("Filename", text: $fileName, prompt: Text("README.md")).labelsHidden()
+                        
+                        Spacer()//doesn't space enough! why? fuck me, i guess. TODO: fix
+                        Text("Branch:").bold()
+                        TextField("branch", text: $branch, prompt: Text("main"))
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                        Picker("branch", selection: branchSelection) {
+                            ForEach(self.branchOptions, id: \.self) { b in
+                                Text(b).tag(Branch.branch(name: b))
+                            }
+                            Text("New Branch")
+                                .tag(Branch.none)
+                        }
+                    }
+                    .padding()
                     switch fileName.split(separator: ".").last {
                         //                case "md", "markdown":
                         //                    HighlightedTextEditor(text: $content, highlightRules: .markdown)
@@ -85,16 +127,16 @@ struct FileDetailView: View {
                             Menu {
                                 Button {
                                     Task {
-                                        let res = await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: "main")
-                                        self.hash = res.hash
-                                        self.initialContent = self.content
+                                        let res = await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: branch)
+                                        let idx = self.model.path.count - 1
+                                        self.model.path[idx] = .fileEditor(id: self.id, hash: res.hash, branches: [branch])
                                     }
                                 } label: {
                                     Text("Save")
                                 }
                                 Button {
                                     Task {
-                                        await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: "main")
+                                        await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: branch)
                                         self.model.path.removeLast()
                                     }
                                 } label: {
@@ -104,13 +146,12 @@ struct FileDetailView: View {
                                 Text("Save & Preview")
                             } primaryAction: {
                                 Task {
-                                    let res = await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: "main")
-                                    self.hash = res.hash
-                                    self.initialContent = self.content
-                                    self.model.path.append(ContentView.Navigation.previewFile(id: id, hash: self.hash, filename: self.fileName))
+                                    let res = await model.saveFile(id: id, name: fileName, content: content, parentCommit: hash, branch: branch)
+                                    self.model.path.removeLast()
+                                    self.model.path += [.fileEditor(id: self.id, hash: res.hash, branches: [branch]), .previewFile(id: self.id, hash: res.hash, filename: self.fileName)]
                                 }
                             }
-                            .disabled(fileName.isEmpty)
+                            .disabled(fileName.isEmpty || branch.isEmpty)
                         }
                     }
                 }

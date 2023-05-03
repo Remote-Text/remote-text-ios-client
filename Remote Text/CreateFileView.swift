@@ -33,7 +33,8 @@ struct CreateFileView: View {
                         Task {
                             let newFile = await model.createFile(named: fileName, withContent: content)
                             self.model.path.removeLast()
-                            self.model.path.append(ContentView.Navigation.fileEditor(file: newFile))
+                            //TODO: fix
+                            self.model.path.append(ContentView.Navigation.fileEditor(id: newFile.id, hash: "TODO", branches: ["main"]))
                         }
                     } label: {
                         Text("Create")
@@ -53,7 +54,7 @@ struct CreateFileView: View {
                         let newFile = await model.createFile(named: fileName, withContent: content)
                         let hash = await model.getHistory(id: newFile.id).commits[0].hash
                         self.model.path.removeLast()
-                        self.model.path.append(ContentView.Navigation.fileEditor(file: newFile))
+                        self.model.path.append(ContentView.Navigation.fileEditor(id: newFile.id, hash: hash, branches: ["main"]))
                         
                         self.model.path.append(ContentView.Navigation.previewFile(id: newFile.id, hash: hash, filename: newFile.name))
                     }
