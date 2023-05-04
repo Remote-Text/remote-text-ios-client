@@ -13,6 +13,13 @@ struct File: Identifiable, Codable {
   let content: String
 }
 
+struct CreateFileResult: Identifiable, Codable {
+    let name: String
+    let id: UUID
+    let hash: String
+    let createdTime: Date
+}
+
 struct FileSummary: Identifiable, Codable, Hashable {
   let name: String
   let id: UUID

@@ -33,8 +33,7 @@ struct CreateFileView: View {
                         Task {
                             let newFile = await model.createFile(named: fileName, withContent: content)
                             self.model.path.removeLast()
-                            //TODO: fix
-                            self.model.path.append(ContentView.Navigation.fileEditor(id: newFile.id, hash: "TODO", branches: ["main"]))
+                            self.model.path.append(ContentView.Navigation.fileEditor(id: newFile.id, hash: newFile.hash, branches: ["main"]))
                         }
                     } label: {
                         Text("Create")
