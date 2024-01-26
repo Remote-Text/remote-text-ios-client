@@ -9,6 +9,7 @@ import SwiftUI
 import SFSafeSymbols
 
 struct ContentView: View {
+    @AppStorage("api_url") var serverURL: String = ""
     
     @ObservedObject var model: FileModel
     @State var files: [FileSummary] = []
@@ -29,6 +30,26 @@ struct ContentView: View {
     }
     
     var body: some View {
+        if serverURL == "" {
+            VStack {
+                Spacer()
+                Text("Please go to Settings to set the root API URL:").font(.title).multilineTextAlignment(.center)
+                Button {
+                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                } label: {
+                    Text("Open Settings")
+                }
+                Spacer()
+                Text("It will probably be of the form:").font(.caption)
+                Text("http://blinky.wholphin-wyvern.ts.net:3030/api").monospaced()
+                Spacer()
+            }.padding()
+        } else {
+            normalUsage
+        }
+    }
+    
+    var normalUsage: some View {
         NavigationStack(path: $model.path) {
             FileListView(files: self.$files)
                 .navigationDestination(for: Navigation.self) { nav in

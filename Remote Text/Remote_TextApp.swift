@@ -9,10 +9,14 @@ import SwiftUI
 
 @main
 struct Remote_TextApp: App {
-  
-  var body: some Scene {
-    WindowGroup {
-      ContentView(model: FileModel.shared)
+    
+    init() {
+//        UserDefaults.standard.register(defaults: <#T##[String : Any]#>)
     }
-  }
+    
+    var body: some Scene {
+        WindowGroup {
+            ContentView(model: FileModel.shared)
+        }
+    }
 }

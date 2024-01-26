@@ -12,11 +12,12 @@ class FileModel: ObservableObject {
   
     static let shared = FileModel()
     
+    @AppStorage("api_url") var BASE_URL: String = ""
+    
 //    @Published var path = NavigationPath()
     @Published var path: [ContentView.Navigation] = []
     
     private func request(to endpoint: String, with data: Codable?) throws -> URLRequest {
-        let BASE_URL = "http://localhost:3030/api"
         guard let url = URL(string: "\(BASE_URL)/\(endpoint)") else {
             fatalError("Cannot construct URL for API call!")
         }
@@ -57,7 +58,7 @@ class FileModel: ObservableObject {
     }
     
     @discardableResult
-    func createFile(named name: String, withContent content: String) async -> FileSummary {
+    func createFile(named name: String, withContent content: String) async -> CreateFileResult {
         let dataToEncode = FileNameAndOptionalContent(name: name, content: content)
         let urlRequest = try! request(to: "createFile", with: dataToEncode)
         let (data, response) = try! await URLSession.shared.data(for: urlRequest)
@@ -78,7 +79,7 @@ class FileModel: ObservableObject {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
         
-        let file = try! decoder.decode(FileSummary.self, from: data)
+        let file = try! decoder.decode(CreateFileResult.self, from: data)
         
         return file
     }

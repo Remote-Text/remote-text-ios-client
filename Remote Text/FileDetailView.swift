@@ -33,7 +33,7 @@ struct FileDetailView: View {
                     .onAppear {
                         Task {
                             let history = await model.getHistory(id: id)
-                            self.hash = history.refs.first { $0.name == "main" }!.hash
+                            self.hash = history.refs.first { $0.name == "main" || $0.name == "master" }!.hash
                             let file = await model.getFile(id: id, atVersion: self.hash)
                             self.fileName = file.name
                             self.content = file.content

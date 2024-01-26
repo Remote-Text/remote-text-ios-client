@@ -20,6 +20,22 @@ struct FileSummary: Identifiable, Codable, Hashable {
   let createdTime: Date
 }
 
+struct CreateFileResult: Identifiable, Codable, Hashable {
+    let name: String
+    let id: UUID
+    let hash: String
+    let createdTime: Date
+    
+    func toFileSummary() -> FileSummary {
+        .init(
+            name: name,
+            id: id,
+            editedTime: createdTime,
+            createdTime: createdTime
+        )
+    }
+}
+
 struct GitCommit: Codable {
   let hash: String
   let parent: String?
